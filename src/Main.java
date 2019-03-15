@@ -10,45 +10,39 @@ public class Main {
     static DFA var;
     static NFA var2;
     public static void main(String[] args) throws FileNotFoundException {
-        File fa = new File("./COSC485_P1_DFA.txt");
+        File fa = new File("./COSC485_P1_NFATEST.txt");
         FA temp = parseFA(fa);
+        File strings = new File("./COSC485_P1_Strings.txt");
+        ArrayList<String> values = readStrings(strings);
+
+
+        File outputFile = new File("./COSC485_P1_Answers.txt");
 
         if (isDFA) {
             var = (DFA) temp;
             boolean status;
             String input = "";
-
-            input = "aaaab";
-            status = var.verify(input);
-            if(status) System.out.println("The string "+input+" has been accepted.");
-            else System.out.println("The string "+input+" has been rejected.");
-
-            input = "aaaaaaaaaa";
-            status = var.verify(input);
-            if(status) System.out.println("The string "+input+" has been accepted.");
-            else System.out.println("The string "+input+" has been rejected.");
-
-            input = "aaaaaaaaaaaaaaaaaaab";
-            status = var.verify(input);
-            if(status) System.out.println("The string "+input+" has been accepted.");
-            else System.out.println("The string "+input+" has been rejected.");
-
-            input = "abbbbbbbbbbb";
-            status = var.verify(input);
-            if(status) System.out.println("The string "+input+" has been accepted.");
-            else System.out.println("The string "+input+" has been rejected.");
-
-            input = "b";
-            status = var.verify(input);
-            if(status) System.out.println("The string "+input+" has been accepted.");
-            else System.out.println("The string "+input+" has been rejected.");
+            for (int i = 0; i<values.size(); i++){
+                input = values.get(i);
+                status = var.verify(input);
+                if(status) System.out.println("The string "+input+" has been accepted.");
+                else System.out.println("The string "+input+" has been rejected.");
+            }
         } else {
-            NFA var = (NFA) temp;
-            temp = var;
+            var2 = (NFA) temp;
         }
-
     }
-
+    private static ArrayList<String> readStrings(File file) throws FileNotFoundException {
+        Scanner reader =  new Scanner(file);
+        ArrayList<String> values = new ArrayList<>();
+        while(reader.hasNextLine()){
+            String line = reader.nextLine();
+            if(line.length()!=0){
+                values.add(line);
+            }
+        }
+        return values;
+    }
     /**
      * Converts a line like States =, Alphabet =, Final States =
      * to a usable String[] for our nodes later.

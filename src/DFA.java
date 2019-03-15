@@ -65,29 +65,14 @@ public class DFA extends FA {
     }
 
     /**
-     * Method which will go through all of the States in the DFA, adding transitions where none exist.
+     * Method which will go through all of the States in the DFA, adding transitions to a sink where none exist.
      */
     private void purify(){
         //loop through all states. If a transition is missing, add one to a sink state.
-        //If a state is an end state, make the transition point to itself
         for (int i = 0; i<nodes.size(); i++){
             DFAState currentState = nodes.get(i);
-            //check if it is an end state (should loop?)
-            if (purifyHelper(currentState.getName())){
-                //it is an end state, so add self loops?
-                if(currentState.transitions.size()!=this.getCardinality()){
-                    //Okay, so the number of transitions DOES NOT EQUAL the number of symbols in the alphabet, so time to find the missing link.
-                    for(int j = 0; j<this.getAlphabet().length; j++){
-                        if (!currentState.hasTransition(this.getAlphabet()[j])){
-                            //if our current State DOES NOT have a transition for this symbol, we add one.
-                            String[] temp = {currentState.getName(), this.getAlphabet()[j], currentState.getName()};
-                            Transition tempT = new Transition(temp);
-                            currentState.addTransition(tempT);
-                        }
-                    }
-                }
-            }
-            else { // this is not an end state, so add sink state transitions
+            if(currentState.transitions.size()!=this.getCardinality()){
+                //Okay, so the number of transitions DOES NOT EQUAL the number of symbols in the alphabet, so time to find the missing link.
                 for(int j = 0; j<this.getAlphabet().length; j++){
                     if (!currentState.hasTransition(this.getAlphabet()[j])){
                         //if our current State DOES NOT have a transition for this symbol, we add one.
@@ -100,17 +85,6 @@ public class DFA extends FA {
         }
     }
 
-    /**
-     * Helper method which will check to see if the given state name is an ending state or not.
-     * @param name - name of the state to check for
-     * @return true - it is an end state, false - it is not an end state
-     */
-    private boolean purifyHelper(String name){
-        for(int i = 0; i<getFinalStates().length; i++){
-            if (getFinalStates()[i].equals(name)) return true;
-        }
-        return false;
-    }
     /**
      * THIS NEEDS TO PULL FROM THE NODES INSTEAD OF FROM STATES. FIND THE STATES IN NODES, THEN ADD THEM HERE.
      * @param states
@@ -190,22 +164,18 @@ public class DFA extends FA {
             currentState = currentState.getNextState(symbol);
         }
 //        return verifyHelper(currentState);
-        return purifyHelper(currentState.getName());
+        return isEndState(currentState.getName());
     }
 
-
-    //DEPRECATED
-//    /**
-//     * Helper method which will see if final state is an end state or not.
-//     * @param currentState
-//     * @return
-//     */
-//    private boolean verifyHelper(DFAState currentState){
-//        for(int i = 0; i<endStates.size();i++){
-//            if (endStates.get(i).getName().equals(currentState.getName())) return true;
-//        }
-//        return false;
-//    }
-
-
+    /**
+     * Helper method which will check to see if the given state name is an ending state or not.
+     * @param name - name of the state to check for
+     * @return true - it is an end state, false - it is not an end state
+     */
+    private boolean isEndState(String name){
+        for(int i = 0; i<getFinalStates().length; i++){
+            if (getFinalStates()[i].equals(name)) return true;
+        }
+        return false;
+    }
 }
