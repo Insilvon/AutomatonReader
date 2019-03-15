@@ -17,6 +17,12 @@ public class DFA extends FA {
         public void addTransition(Transition var){
             transitions.add(var);
         }
+        public boolean hasTransition(String name){
+            for(int i = 0; i<transitions.size(); i++){
+                if (transitions.get(i).getSymbol().equals(name)) return true;
+            }
+            return false;
+        }
         public DFAState getNextState(char symbol){
             for (int i = 0; i<transitions.size(); i++){
                 Transition currentTransition = transitions.get(i);
@@ -36,7 +42,50 @@ public class DFA extends FA {
         createStates(states);
         createEndStates(finalStates);
         addTransitions(transFunctions);
+        purify();
     }
+    private void purify(){
+        //loop through all states. If a transition is missing, add one to a sink state.
+        //If a state is an end state, make the transition point to itself
+        for (int i = 0; i<nodes.size(); i++){
+            DFAState currentState = nodes.get(i);
+            //check if it is an end state (should loop?)
+            if (purifyHelper(currentState.getName())){
+                //it is an end state, so add self loops?
+                if(currentState.transitions.size()!=this.getCardinality()){
+                    //Okay, so the number of transitions DOES NOT EQUAL the number of symbols in the alphabet, so time to find the missing link.
+                    for(int j = 0; j<this.getAlphabet().length; j++){
+                        if (!currentState.hasTransition(this.getAlphabet()[j])){
+                            //if our current State DOES NOT have a transition for this symbol, we add one.
+                            String[] temp = {currentState.getName(), this.getAlphabet()[j], currentState.getName()};
+                            Transition tempT = new Transition(temp);
+                            currentState.addTransition(tempT);
+                        }
+                    }
+                }
+            }
+            else { // this is not an end state, so add sink state transitions
+                for(int j = 0; j<this.getAlphabet().length; j++){
+                    if (!currentState.hasTransition(this.getAlphabet()[j])){
+                        //if our current State DOES NOT have a transition for this symbol, we add one.
+                        String[] temp = {currentState.getName(), this.getAlphabet()[j], "sink"};
+                        Transition tempT = new Transition(temp);
+                        currentState.addTransition(tempT);
+                    }
+                }
+            }
+        }
+    }
+    private boolean purifyHelper(String name){
+        for(int i = 0; i<getFinalStates().length; i++){
+            if (getFinalStates()[i].equals(name)) return true;
+        }
+        return false;
+    }
+    /**
+     * THIS NEEDS TO PULL FROM THE NODES INSTEAD OF FROM STATES. FIND THE STATES IN NODES, THEN ADD THEM HERE.
+     * @param states
+     */
     private void createEndStates(String[] states){
         for (int i = 0; i<states.length; i++){
             String item = states[i];

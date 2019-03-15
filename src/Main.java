@@ -33,10 +33,15 @@ public class Main {
             if(status) System.out.println("The string "+input+" has been accepted.");
             else System.out.println("The string "+input+" has been rejected.");
 
-//            input = "bbbbbbbbbbb";
-//            status = var.verify(input);
-//            if(status) System.out.println("The string "+input+" has been accepted.");
-//            else System.out.println("The string "+input+" has been rejected.");
+            input = "abbbbbbbbbbb";
+            status = var.verify(input);
+            if(status) System.out.println("The string "+input+" has been accepted.");
+            else System.out.println("The string "+input+" has been rejected.");
+
+            input = "b";
+            status = var.verify(input);
+            if(status) System.out.println("The string "+input+" has been accepted.");
+            else System.out.println("The string "+input+" has been rejected.");
         } else {
             NFA var = (NFA) temp;
             temp = var;
