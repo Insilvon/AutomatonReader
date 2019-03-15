@@ -1,9 +1,9 @@
 public class Transition {
-    private String state;
     private String symbol;
+    private String state;
     public Transition(String[] vars){
-        this.symbol = vars[0];
-        this.state = vars[1];
+        this.symbol = vars[1];
+        this.state = vars[2];
     }
     public String getState() {
         return state;
