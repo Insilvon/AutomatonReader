@@ -47,7 +47,7 @@ public class DFA extends FA {
      * All of the EndStates for the DFA are contained in this ArrayList.
      */
     private ArrayList<DFAState> endStates = new ArrayList<DFAState>();
-
+    private boolean isDFA = true;
     /**
      * Constructor method for the DFA.
      * @param transFunctions - An array which contains a String[] in each cell. The String[] should contain the transition function criteria.
@@ -56,8 +56,9 @@ public class DFA extends FA {
      * @param startState - the initial state to begin at
      * @param finalStates - a list of all the states that one can terminate in
      */
-    public DFA(ArrayList<String[]> transFunctions, String[] states, String[] alphabet, String startState, String[] finalStates){
+    public DFA(ArrayList<String[]> transFunctions, String[] states, String[] alphabet, String startState, String[] finalStates, boolean isDFA){
         super(transFunctions, states, alphabet, startState, finalStates);
+        this.isDFA = isDFA;
         createStates(states);
         createEndStates(finalStates);
         addTransitions(transFunctions);
@@ -74,7 +75,7 @@ public class DFA extends FA {
             if(currentState.transitions.size()!=this.getCardinality()){
                 //Okay, so the number of transitions DOES NOT EQUAL the number of symbols in the alphabet, so time to find the missing link.
                 for(int j = 0; j<this.getAlphabet().length; j++){
-                    if (!currentState.hasTransition(this.getAlphabet()[j])){
+                    if (!currentState.hasTransition(this.getAlphabet()[j])&&this.isDFA){
                         //if our current State DOES NOT have a transition for this symbol, we add one.
                         String[] temp = {currentState.getName(), this.getAlphabet()[j], "sink"};
                         Transition tempT = new Transition(temp);
@@ -109,10 +110,12 @@ public class DFA extends FA {
             DFAState state = new DFAState(item);
             nodes.add(state);
         }
-        DFAState sinkState = new DFAState("sink");
-        sinkState.addTransition(new Transition(new String[] {"sink","a","sink"}));
-        sinkState.addTransition(new Transition(new String[] {"sink","b","sink"}));
-        nodes.add(sinkState);
+        if (this.isDFA) {
+            DFAState sinkState = new DFAState("sink");
+            sinkState.addTransition(new Transition(new String[]{"sink", "a", "sink"}));
+            sinkState.addTransition(new Transition(new String[]{"sink", "b", "sink"}));
+            nodes.add(sinkState);
+        }
     }
 
     /**

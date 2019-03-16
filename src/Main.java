@@ -7,11 +7,10 @@ public class Main {
 
 
     static boolean isDFA = true;
-    static DFA var;
-    static NFA var2;
+
     public static void main(String[] args) throws FileNotFoundException {
-        File fa = new File("./COSC485_P1_NFATEST.txt");
-        FA temp = parseFA(fa);
+        File fa = new File("./COSC485_P1_DFA.txt");
+        DFA var = parseFA(fa);
         File strings = new File("./COSC485_P1_Strings.txt");
         ArrayList<String> values = readStrings(strings);
 
@@ -19,17 +18,18 @@ public class Main {
         File outputFile = new File("./COSC485_P1_Answers.txt");
 
         if (isDFA) {
-            var = (DFA) temp;
-            boolean status;
-            String input = "";
-            for (int i = 0; i<values.size(); i++){
-                input = values.get(i);
-                status = var.verify(input);
-                if(status) System.out.println("The string "+input+" has been accepted.");
-                else System.out.println("The string "+input+" has been rejected.");
-            }
+
         } else {
-            var2 = (NFA) temp;
+//            var2 = (NFA) temp;
+        }
+
+        boolean status;
+        String input = "";
+        for (int i = 0; i<values.size(); i++){
+            input = values.get(i);
+            status = var.verify(input);
+            if(status) System.out.println("The string "+input+" has been accepted.");
+            else System.out.println("The string "+input+" has been rejected.");
         }
     }
     private static ArrayList<String> readStrings(File file) throws FileNotFoundException {
@@ -95,7 +95,7 @@ public class Main {
      * Reads the FA file and sifts out the data it needs
      * @param file file to read
      */
-    private static FA parseFA(File file){
+    private static DFA parseFA(File file){
         String[] states = new String[0];
         String[] alphabet = new String[0];
         String startState = "";
@@ -141,15 +141,9 @@ public class Main {
         }
 
         //Rest of code here.
-        if (dfa) {
-            isDFA = true;
-            DFA var = new DFA(transitions, states, alphabet, startState, finalStates);
-            return var;
-        } else {
-            isDFA = false;
-            NFA var = new NFA(transitions, states, alphabet, startState, finalStates);
-            return var;
-        }
-
+        if (dfa) isDFA = true;
+        else isDFA = false;
+        DFA var = new DFA(transitions, states, alphabet, startState, finalStates, isDFA);
+        return var;
     }
 }
